@@ -218,13 +218,38 @@ void clientRequestCertificate(int sock) {
     }
 }
 
+void clientRevokeCertificate(int sock) {
+    std::string username;
+    std::cout << "Enter username to revoke certificate: ";
+    std::getline(std::cin, username);
+
+    // Construct the message to send to the server
+    std::string message = "REVOKE " + username;
+
+    // Send the message to the server
+    if (send(sock, message.c_str(), message.size(), 0) < 0) {
+        perror("Failed to send revoke request to server");
+        return;
+    }
+
+    // Receive the response from the server
+    char buffer[4096] = {0};
+    int bytesRead = read(sock, buffer, sizeof(buffer));
+    if (bytesRead > 0) {
+        std::cout << "Server response: " << std::string(buffer, bytesRead) << std::endl;
+    } else {
+        perror("Failed to receive response from server");
+    }
+}
+
 void clientMenu(int sock) {
     while (true) {
         std::cout << "\n--- Client Menu ---\n";
         std::cout << "1. Register\n";
         std::cout << "2. Login\n";
         std::cout << "3. Request Certificate\n";
-        std::cout << "4. Exit\n";
+        std::cout << "4. Revoke Certificate\n";
+        std::cout << "5. Exit program\n";
         std::cout << "Enter your choice: ";
 
         std::string choice;
@@ -237,6 +262,8 @@ void clientMenu(int sock) {
         } else if (choice == "3") {
             clientRequestCertificate(sock);
         } else if (choice == "4") {
+            clientRevokeCertificate(sock);
+        } else if (choice == "5") {
             std::cout << "Exiting client." << std::endl;
             break;
         } else {

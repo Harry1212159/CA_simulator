@@ -14,6 +14,7 @@
 #include <openssl/rsa.h>
 #include <openssl/bio.h>
 #include <openssl/x509_vfy.h>
+
 using namespace std;
 // Functions that implement client operations
 void clientRegister();
